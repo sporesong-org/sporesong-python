@@ -1,0 +1,8 @@
+# Compilation
+__pycache__/
+*.pyc
+
+# Environment Vars
+.env
+
+
