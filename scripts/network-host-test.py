@@ -3,15 +3,17 @@ from lib.networking import server
 from websockets.asyncio.server import ServerConnection
 import time
 
-def print_stuff(message):
-    print(message)
+
+async def print_stuff(socket: ServerConnection, message):
+    print(socket.id, message)
+    await s.id_to_connection[socket.id].put(str(socket.id))
 
 async def tx(socket: ServerConnection, message):
-    await socket.send(message)
+    await socket.send(message, text=True)
 
+s = server.Server(print_stuff, tx)
 
 async def main():
-    s = server.Server(print_stuff, tx)
     await s.start_server("", 4321)
 
 

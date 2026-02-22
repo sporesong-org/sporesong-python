@@ -21,15 +21,17 @@ class Server:
         self.function_tx = function_tx
         self.watch_tx = asyncio.Queue()
         self.server = None
+        self.id_to_connection = {}
         
     async def __server_rx(self, websocket: ServerConnection):
         async for message in websocket:
-            self.function_rx(message)
-            await self.function_tx(websocket, "mic check 6 7 ")
+            await self.function_rx(websocket, message)
 
     async def __server_tx(self, websocket: ServerConnection):
+        solo_tx = asyncio.Queue()
+        self.id_to_connection[websocket.id] = solo_tx
         while True:
-            message = await self.watch_tx.get()
+            message = await solo_tx.get()
             await self.function_tx(websocket, message)
 
     async def server_connection_handler(self, websocket: ServerConnection) -> None:
