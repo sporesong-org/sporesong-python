@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from server!")
+from server.main import main
