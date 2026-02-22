@@ -52,17 +52,17 @@ class Database:
             cursor = self.__connection.cursor()
             cursor.execute("""
             CREATE TABLE client(
-            id          CHAR(32)    PRIMARY KEY,
-            name        CHAR(30)    NOT NULL,
+            id          VARCHAR    PRIMARY KEY,
+            name        VARCHAR    NOT NULL,
             join_date   TIMESTAMP   NOT NULL,
-            secret      CHAR(30)
+            secret      VARCHAR
             );
 
             CREATE TABLE message (
             sequence_number BIGSERIAL   PRIMARY KEY,
             time            TIMESTAMP   NOT NULL,
             content         VARCHAR     NOT NULL,
-            author          CHAR(32)    NOT NULL,
+            author          VARCHAR     NOT NULL,
             FOREIGN KEY (author) REFERENCES client (id)
             );
 
@@ -110,7 +110,7 @@ class Database:
         print(f"STATUS: Storing user '{name}':('{id}')")
         if self.__connection is None:
             print("ERROR: Connection not initialized")
-            return
+            return None
 
         try:
             cursor = self.__connection.cursor()
