@@ -113,7 +113,7 @@ class MessageBody:
 
         return self
     
-    def CSRR(self, ):
+    def CSRR(self, display_name : str = ""):
         """
         Client-Server Registration Request (CSRR)
 
@@ -122,7 +122,9 @@ class MessageBody:
         respond.
         """
         self.type = "CSRR"
-        self.content = {}
+        self.content = {
+            "display_name" : display_name
+        }
         self.tags = {}
 
         return self
