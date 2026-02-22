@@ -15,7 +15,7 @@ print(out_text)
 
 message = msg.Message()
 body = mb.MessageBody()
-body = body.CSN("Hello, World!", "utf-8")
+body = body.CPSLR()
 packed = message.set_source("SRC").set_destination("DST").set_body(body).pack(public_key)
 print(packed)
 unpacked = msg.unpack(packed, private_key)
