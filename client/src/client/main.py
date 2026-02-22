@@ -3,19 +3,19 @@ import asyncio
 
 c = Client()
 
-default_proxy_endpoint = "ws://localhost:4321"
+default_proxy_endpoint = "ws://pacific:4321"
 
 async def main(target_proxy : str):
     while True:
-        #try:
+        try:
             connection_task = asyncio.create_task(c.client.connect(target_proxy))
             user_interface_task = asyncio.create_task(c.entry_point())
         
             await connection_task
         
-        #except Exception:
-        #    print(f"It seems that the proxy {target_proxy} is currently unreachable.")
-        #    target_proxy = input("Enter another proxy address: ")
+        except Exception:
+            print(f"It seems that the proxy {target_proxy} is currently unreachable.")
+            target_proxy = input("Enter another proxy address: ")
 
 def connect_to_proxy():
     print(
