@@ -9,6 +9,7 @@ async def starting() -> None:
     boot_task = asyncio.create_task(s.boot())
     await conenction_task
     
+    
 
 if __name__=="__main__":
     asyncio.run (starting())
