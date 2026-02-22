@@ -73,7 +73,7 @@ class Client:
         await self.CSRR(server_key)
 
         while True:
-            user_input = await asyncio.to_thread(input, f"user@{server_name}: ")
+            user_input = await asyncio.to_thread(input, "> ")
             body = mb.MessageBody()
             body = body.CSN(user_input, "text")
             body.content["secret"] = self.secret
@@ -89,8 +89,6 @@ class Client:
         if dst == self.public_key:
             # Message is meant for us
             message_data = msg.unpack_all(message, self.private_key)
-
-            print(message_data)
 
             body : mb.MessageBody = mb.MessageBody()
 
