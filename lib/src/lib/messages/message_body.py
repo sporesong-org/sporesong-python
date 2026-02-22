@@ -217,6 +217,20 @@ class MessageBody:
 
         return json.dumps(message_json)
 
+    """
+    Creates a str of the json representation of the MessageType.
+    Used to get the MessageType's contents for sending over the
+    network.
+    """
+    def pack_unencrypted(self) -> str:
+        message_dict : dict = {
+            "type" : self.type,
+            "content" : self.content,
+            "tags" : self.tags
+        }
+
+        return message_dict
+
 def unpack(body_json : str) -> dict:
     body_data : dict = json.loads(body_json)
 
