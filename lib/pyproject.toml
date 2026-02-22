@@ -5,7 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 authors = [{ name = "Orion Hess", email = "orionhess@gmail.com" }]
 requires-python = ">=3.14"
-dependencies = ["cryptography>=46.0.5"]
+dependencies = [
+    "cryptography>=46.0.5",
+    "numpy>=2.4.2",
+]
 
 [tool.uv.sources]
 cryptography = { git = "https://github.com/pyca/cryptography" }
