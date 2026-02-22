@@ -1,6 +1,6 @@
 import psycopg2
 
-from server.config import Config
+from config import Config
 from typing import Tuple, List
 
 class Database:
@@ -162,6 +162,36 @@ class Database:
         # TODO: Proper exception handling
         except Exception as e:
             print(f"ERROR: {e}")
+
+    def update_client_secret(self, id: str, secret: str) -> None:
+        print("STATUS: Updating client secret")
+        if not self.connection_is_alive:
+            return
+
+        try:
+            cursor = self.__connection.cursor()
+            cursor.execute("UPDATE client SET secret = %s WHERE id = %s", (secret, id, ))
+            cursor.close()
+            self.__connection.commit()
+        # TODO: Proper exception handling
+        except Exception as e:
+            print(f"ERROR: {e}")
+
+
+    def update_client_name(self, id: str, name: str) -> None:
+        print("STATUS: Updating client secret")
+        if not self.connection_is_alive:
+            return
+
+        try:
+            cursor = self.__connection.cursor()
+            cursor.execute("UPDATE client SET name = %s WHERE id = %s", (name, id, ))
+            cursor.close()
+            self.__connection.commit()
+        # TODO: Proper exception handling
+        except Exception as e:
+            print(f"ERROR: {e}")
+
 
     def put_message(self, content: str, author: str, tags: dict[str, str]) -> int | None:
         print("STATUS: Putting message")
