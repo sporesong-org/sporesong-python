@@ -21,12 +21,15 @@ class Message:
         self.message_body = body
         return self
 
-    """
-    Creates a str of the json representation of the Message.
-    Used to get the Message's contents for sending over the
-    network.
-    """
     def pack(self, body_key : str = "") -> tuple[str, int]:
+        """
+        Creates a str of the json representation of the Message.
+        Used to get the Message's contents for sending over the
+        network.
+
+        If no body key is provided, the message is made without
+        encryption.
+        """
         if body_key == "":
             encrypted_body : str = self.message_body.pack_unencrypted()
         else:
@@ -45,15 +48,23 @@ class Message:
 
     
 def unpack_header(message_json : str) -> dict:
+    """
+    Unpacks a message's header for easy dictionary access
+    of values. Does not handle body content.
+    """
     message_data : dict = json.loads(message_json)
 
     return message_data
         
-def unpack_all(message_json : str, body_key : str) -> dict:
+def unpack_all(message_json : str, body_key : str = "") -> dict:
+    """
+    Unpacks the entire contents of a message, using a decryption
+    key if provided.
+    """
+
     message_data : dict = json.loads(message_json)
 
     if body_key != "":
-
         message_data["body"] = mb.unpack(
             cryptography.decrypt(
                 message_data["body"], body_key
