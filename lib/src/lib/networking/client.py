@@ -22,7 +22,7 @@ class Client:
         
     async def __client_rx(self, websocket: ClientConnection):
         async for message in websocket:
-            self.function_rx(message)
+            await self.function_rx(message)
 
     async def __client_tx(self, websocket: ClientConnection):
         while True:
