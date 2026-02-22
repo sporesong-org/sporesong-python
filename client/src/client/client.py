@@ -49,67 +49,23 @@ class Client:
             await self.send_message(body, "")
 
     # Function for handling incoming transmissions
-    async def rx(self, socket: ServerConnection, message : str):
-        print(socket.id, message)
-
+    async def rx(self, message : str):
         message_header_data : dict = msg.unpack_header(message)
 
         dst : str = message_header_data["destination"]
         src : str = message_header_data["source"]
 
-        if not (src in self.public_keys_to_ids.keys()):
-            # We don't have them in the map yet...
-            self.public_keys_to_ids[src] = socket.id
-
-        if dst == self.public_key or dst == "":
+        if dst == self.public_key:
             # Message is meant for us
-            if dst == "":
-                message_data = msg.unpack_all(message, "")
-            else:
-                message_data = msg.unpack_all(message, self.private_key)
+            message_data = msg.unpack_all(message, self.private_key)
+
+            print(message_data)
 
             body : mb.MessageBody = mb.MessageBody()
 
             match message_data["body"]["type"]:
-                case "SPRR":
-                    # This requires us building the server registry
-                    server_display_name = message_data["body"]["content"]["display_name"]
-                    visibility_level = message_data["body"]["content"]["visibility_level"]
-
-                    # Current implementation always accepts requests
-                    # TODO: make it possible to deny based on something
-                    self.add_server_to_registry(server_display_name, src)
-                    self.add_server_visibility(visibility_level, src)
-
-                    body = body.PSRA(True)
-                    await self.send_message(body, src)
-
-                case "GSB":
-                    body = body.GSA()
-                    await self.send_message(body, src)
-
-                case "CPSLR":
-                    # Client is requesting a list of public servers
-                    # We gotta get that list (+S, display name)
-
-                    server_list : list[tuple[str, str]] = []
-
-                    for key in self.server_visibility.keys():
-                        if self.server_visibility[key] == "public":
-                            server_list.append(
-                                (key, self.server_registry[key])
-                            )
-
-                    body = body.PCSLA(server_list) # Pass in list
-                    await self.send_message(body, src)
                 case _:
                     pass # Don't know how to handle that one...
-        else:
-            # Message was meant for another
-            try:
-                await self.send_to_client(self.public_keys_to_ids[src], message)
-            except Exception:
-                print(f"Unable to forward message to ({src}). Does it have an associated socket id?")
 
     # Function for handling outbound transmissions
     async def tx(self, socket: ServerConnection, message):
