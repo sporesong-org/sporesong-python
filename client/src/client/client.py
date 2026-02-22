@@ -20,6 +20,9 @@ class Client:
         a keypair for encryption.
         """
         self.client = nClient(self.rx, self.tx)
+        self.secret : str = ""
+        self.server_list : list[tuple[str, str]] = []
+        self.fetched_servers = False
         self.private_key, self.public_key = cryptography.generate_keypair()
 
     async def send_to_proxy(self, packed_message : str):
@@ -41,12 +44,38 @@ class Client:
 
         await self.send_to_proxy(message_packed)
 
+    async def CPSLR(self):
+        body = mb.MessageBody()
+        body = body.CPSLR()
+        await self.send_message(body, "")
+
+    async def CSRR(self, server_key : str):
+        body = mb.MessageBody()
+        body = body.CSRR("c1i3n7")
+        await self.send_message(body, server_key)
+
     async def entry_point(self):
+        await self.CPSLR()
+
+        while not self.fetched_servers:
+            await asyncio.sleep(0.1)
+
+        print("Choose a server (type server name):")
+        for server_tuple in self.server_list:
+            print(server_tuple[0])
+
+        user_in = input()
+        for server_tuple in self.server_list:
+            if server_tuple[1] == user_in:
+                server_key = server_tuple[0]
+                server_name = server_tuple[1]
+
         while True:
-            user_input = await asyncio.to_thread(input, "> ")
+            user_input = await asyncio.to_thread(input, f"user@{server_name}: ")
             body = mb.MessageBody()
-            body = body.GSB("online")
-            await self.send_message(body, "")
+            body = body.CSN(user_input, "text")
+            body.content["secret"] = self.secret
+            await self.send_message(body, server_key)
 
     # Function for handling incoming transmissions
     async def rx(self, message : str):
@@ -63,7 +92,20 @@ class Client:
 
             body : mb.MessageBody = mb.MessageBody()
 
+            content : dict = message_data["body"]["content"]
+
             match message_data["body"]["type"]:
+                case "SCSA":
+                    self.secret = content["secret"]
+                case "PCSLA":
+                    self.server_list = content["server_list"]
+                    self.fetched_servers = True
+                case "SCRA":
+                    pass
+                case "SCPI":
+                    notes : list[tuple[int, str, dict]] = content["notes"]
+                    for note in notes:
+                        print(f"Message #{note[0]}: {note[1]}")
                 case _:
                     pass # Don't know how to handle that one...
 
