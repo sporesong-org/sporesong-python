@@ -1,6 +1,6 @@
 import json
-import message_body as mb
-import cryptography as cryptography
+import lib.messages.message_body as mb
+import lib.cryptography.key as cryptography
 from datetime import datetime
 
 class Message:
@@ -21,11 +21,6 @@ class Message:
         self.message_body = body
         return self
 
-    def length(self, input_text : str) -> int:
-        body_text_length : int = len(input_text)
-
-        return body_text_length
-
     """
     Creates a str of the json representation of the Message.
     Used to get the Message's contents for sending over the
@@ -43,7 +38,7 @@ class Message:
 
         message_str : str = json.dumps(message_json)
 
-        return (message_str, self.length(message_str))   
+        return message_str   
         
 def unpack(message_json : str, body_key : str) -> dict:
     message_data : dict = json.loads(message_json)
