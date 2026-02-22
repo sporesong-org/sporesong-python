@@ -131,9 +131,9 @@ class Proxy:
         else:
             # Message was meant for another
             try:
-                await self.send_to_client(self.public_keys_to_ids[src], message)
+                await self.send_to_client(self.public_keys_to_ids[dst], message)
             except Exception:
-                print(f"Unable to forward message to ({src}). Does it have an associated socket id?")
+                print(f"Unable to forward message to ({dst}). Does it have an associated socket id?")
 
     # Function for handling outbound transmissions
     async def tx(self, socket: ServerConnection, message):

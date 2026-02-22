@@ -62,13 +62,15 @@ class Client:
 
         print("Choose a server (type server name):")
         for server_tuple in self.server_list:
-            print(server_tuple[0])
+            print(server_tuple[1])
 
         user_in = input()
         for server_tuple in self.server_list:
             if server_tuple[1] == user_in:
                 server_key = server_tuple[0]
                 server_name = server_tuple[1]
+
+        await self.CSRR(server_key)
 
         while True:
             user_input = await asyncio.to_thread(input, f"user@{server_name}: ")
