@@ -25,7 +25,7 @@ async def main():
     #private_key, public_key = key.generate_keypair()
     message = msg.Message()
     body = mb.MessageBody()
-    body = body.CPSLR()
+    body = body.GSB("online")
     packed = message.set_source(public_key).set_destination("").set_body(body).pack("")
     await c.watch_tx.put(packed)
     await c.connect("ws://localhost:4321")
