@@ -26,8 +26,11 @@ class Message:
     Used to get the Message's contents for sending over the
     network.
     """
-    def pack(self, body_key : str) -> tuple[str, int]:
-        encrypted_body : str = cryptography.encrypt(self.message_body.pack(), body_key)
+    def pack(self, body_key : str = "") -> tuple[str, int]:
+        if body_key == "":
+            encrypted_body : str = self.message_body.pack_unencrypted()
+        else:
+            encrypted_body : str = cryptography.encrypt(self.message_body.pack(), body_key)
 
         message_json : dict = {
             "source" : self.source,
@@ -39,15 +42,23 @@ class Message:
         message_str : str = json.dumps(message_json)
 
         return message_str   
-        
-def unpack(message_json : str, body_key : str) -> dict:
+
+    
+def unpack_header(message_json : str) -> dict:
     message_data : dict = json.loads(message_json)
 
-    message_data["body"] = mb.unpack(
-        cryptography.decrypt(
-            message_data["body"], body_key
+    return message_data
+        
+def unpack_all(message_json : str, body_key : str) -> dict:
+    message_data : dict = json.loads(message_json)
+
+    if body_key != "":
+
+        message_data["body"] = mb.unpack(
+            cryptography.decrypt(
+                message_data["body"], body_key
+            )
         )
-    )
 
     return message_data
 
